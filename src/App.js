@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import StartTime from './StartTime.js'
+import StartLocation from './StartLocation.js'
+import DestinationQuery from './DestinationQuery.js'
+import MaxDelta from './MaxDelta.js'
 
 class App extends Component {
   render() {
@@ -13,6 +17,10 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
+      <StartTime/>
+      <StartLocation/>
+      <DestinationQuery/>
+      <MaxDelta/>
       </div>
     );
   }
