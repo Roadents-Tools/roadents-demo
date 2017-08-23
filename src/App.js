@@ -7,20 +7,35 @@ import DestinationQuery from './DestinationQuery.js'
 import MaxDelta from './MaxDelta.js'
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.submit = this.submit.bind(this);
+  }
+
+  submit() {
+    [this.t.getTime(), this.p.getLocation(), this.q.getQuery(), this.dt.getDelta()]
+        .map(a => JSON.stringify(a))
+        .forEach(a => console.log(a));
+  }
+
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+        <div className = "Start-Section">
+          <div className="input-item">
+            <StartTime ref={t => {this.t=t}} className="input-item"/>
+          </div>
+          <div className="input-item">
+              <StartLocation ref={(p) => {this.p = p}} className="input-item"/>
+          </div>
+          <div className="input-item">
+              <DestinationQuery ref={(q) => {this.q = q}}/>
+          </div>
+          <div className="input-item">
+              <MaxDelta onSubmit={this.submit} ref={(dt) => {this.dt = dt}}/>
+          </div>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      <StartTime/>
-      <StartLocation/>
-      <DestinationQuery/>
-      <MaxDelta/>
       </div>
     );
   }

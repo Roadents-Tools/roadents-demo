@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import Select from 'react-select';
-import Createable from 'react-select';
-import 'react-select/dist/react-select.css';
 
 
 export default class MaxDelta extends Component {
@@ -49,20 +46,16 @@ export default class MaxDelta extends Component {
         this.setState({"maxDelta":this.state.maxDelta - 1})
     }
 
-    click() {
-        console.log("Click!");
-    }
-
     render () {
         return <div>
-            <select onChange = {this.maxDeltaChange} value={this.state.maxDelta}>
+            <select style={{display: "inline-block"}} onChange = {this.maxDeltaChange} value={this.state.maxDelta}>
                 {this.buildDeltaOptions()}
             </select>
-            <div>
-                <button onClick={this.incrementDelta}>/\</button>
-                <button onClick={this.decrementDelta}>\/</button>
+            <div style={{display: "inline-block"}}>
+                <button style={{display: "block"}} onClick={this.incrementDelta}>/\</button>
+                <button style={{display: "block"} }onClick={this.decrementDelta}>\/</button>
             </div>
-            <button onClick={this.click}>Reroute</button>
+            <button  style={{display: "inline-block"}} onClick={this.props.onSubmit}>Reroute</button>
         </div>
     }
 }
