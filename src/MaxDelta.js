@@ -20,7 +20,7 @@ export default class MaxDelta extends Component {
     }
 
     getDelta() {
-        return this.state;
+        return this.state.maxDelta;
     }
 
     buildDeltaOptions() {
@@ -52,8 +52,8 @@ export default class MaxDelta extends Component {
                 {this.buildDeltaOptions()}
             </select>
             <div style={{display: "inline-block"}}>
-                <button style={{display: "block"}} onClick={this.incrementDelta}>/\</button>
-                <button style={{display: "block"} }onClick={this.decrementDelta}>\/</button>
+                <button style={{display: "block", "font-size": "2%",}} onClick={this.incrementDelta}>/\</button>
+                <button style={{display: "block", "font-size": "2%"} }onClick={this.decrementDelta}>\/</button>
             </div>
             <button  style={{display: "inline-block"}} onClick={this.props.onSubmit}>Reroute</button>
         </div>

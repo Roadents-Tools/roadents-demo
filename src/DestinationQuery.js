@@ -17,7 +17,7 @@ export default class DestinationQuery extends Component {
     }
 
     getQuery() {
-        return this.state;
+        return this.state.query;
     }
 
     render () {

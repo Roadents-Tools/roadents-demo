@@ -17,7 +17,7 @@ export default class StartLocation extends Component {
     }
 
     getLocation() {
-        return this.state;
+        return this.state.address;
     }
 
     render () {
