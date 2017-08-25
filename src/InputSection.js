@@ -46,28 +46,38 @@ export default class InputSection extends Component {
     }
 
     render () {
-        return <SplitPane split="vertical" style={{"padding-top" : "30%"}} size="50%" className = "Start-Section">
+        return <div id="inputcontainer">
+        <SplitPane split="horizontal" size="60%">
+	<SplitPane split="vertical" size="50%" className = "Start-Section">
           <SplitPane split="vertical" size="50%">
               <div className="input-item">
                 <StartTime ref={t => {this.t=t}} className="input-item"/>
-                <div className="title">StartTime</div>
               </div>
               <div className="input-item">
                   <StartLocation ref={(p) => {this.p = p}} className="input-item"/>
-                  <div className="title">StartLocation</div>
               </div>
           </SplitPane>
           <SplitPane split="vertical" size="50%">
               <div className="input-item">
                   <DestinationQuery ref={(q) => {this.q = q}}/>
-                  <div className="title">Query</div>
               </div>
               <div className="input-item">
                   <MaxDelta onSubmit={this.submit} ref={(dt) => {this.dt = dt}}/>
-                  <div className="title"> Max Delta</div>
               </div>
           </SplitPane>
         </SplitPane>
+        <SplitPane split="vertical" size="50%" className = "Start-Titles">
+          <SplitPane split="vertical" size="50%">
+                <div className="input-title">Start Time</div>
+		<div className="input-title">Start Location</div>
+          </SplitPane>
+          <SplitPane split="vertical" size="50%">
+          	<div className="input-title">Query</div>
+                <div className="input-title"> Max Delta</div>
+          </SplitPane>
+        </SplitPane>
+	</SplitPane>
+    </div>
     }
 
 }

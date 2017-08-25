@@ -16,14 +16,14 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-            <SplitPane split="horizontal" size="16%">
-                <div><InputSection onSubmit={this.submit}/></div>
+            <SplitPane split="horizontal" size="10%">
+                <div style={{height: "100%", width: "100%", "background-color": "blue"}}><InputSection onSubmit={this.submit}/></div>
                 <SplitPane split="horizontal" size="96%">
-                    <SplitPane split="vertical" size="30%">
-                    <div></div>
-                    <div></div>
+                    <SplitPane split="vertical" size="25%">
+                    <div style={{height: "100%", width: "100%", "background-color" : "green"}}></div>
+                    <div style={{height: "100%", width: "100%", "background-color" : "orange"}}></div>
                     </SplitPane>
-                    <div></div>
+                    <div style={{height : "100%", width: "100%", "background-color" : "magenta"}}></div>
                 </SplitPane>
             </SplitPane>
       </div>

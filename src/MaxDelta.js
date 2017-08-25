@@ -36,7 +36,7 @@ export default class MaxDelta extends Component {
     }
 
     incrementDelta() {
-        if(this.state.maxDelta >= 60) return;
+        if(this.state.maxDelta >= 90) return;
         var inc = 1 + this.state.maxDelta;
         this.setState({"maxDelta":inc})
     }
