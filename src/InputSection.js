@@ -7,8 +7,8 @@ import StartLocation from './StartLocation';
 
 export default class InputSection extends Component {
 
-    constructor(props) {
-        super(props);
+  constructor(props, context) {
+        super(props, context);
         this.submit = this.submit.bind(this);
         this.getRequest = this.getRequest.bind(this);
     }
@@ -45,39 +45,24 @@ export default class InputSection extends Component {
         };
     }
 
-    render () {
-        return <div id="inputcontainer">
-        <SplitPane split="horizontal" size="60%">
-	<SplitPane split="vertical" size="50%" className = "Start-Section">
-          <SplitPane split="vertical" size="50%">
-              <div className="input-item">
-                <StartTime ref={t => {this.t=t}} className="input-item"/>
-              </div>
-              <div className="input-item">
-                  <StartLocation ref={(p) => {this.p = p}} className="input-item"/>
-              </div>
-          </SplitPane>
-          <SplitPane split="vertical" size="50%">
-              <div className="input-item">
-                  <DestinationQuery ref={(q) => {this.q = q}}/>
-              </div>
-              <div className="input-item">
-                  <MaxDelta onSubmit={this.submit} ref={(dt) => {this.dt = dt}}/>
-              </div>
-          </SplitPane>
-        </SplitPane>
-        <SplitPane split="vertical" size="50%" className = "Start-Titles">
-          <SplitPane split="vertical" size="50%">
-                <div className="input-title">Start Time</div>
-		<div className="input-title">Start Location</div>
-          </SplitPane>
-          <SplitPane split="vertical" size="50%">
-          	<div className="input-title">Query</div>
-                <div className="input-title"> Max Delta</div>
-          </SplitPane>
-        </SplitPane>
-	</SplitPane>
-    </div>
+    static get contextTypes() {
+      return {
+        muiTheme: React.PropTypes.object
+      };
     }
 
+    render () {
+        return (
+          <div id="InputSection" className="input-section">
+            <div id="startTime" className="start-time">Start Time</div>
+            <div id="startLocation" className="start-location">Start Location</div>
+            <div id="destinationQuery" className="destination-query">Destination Query</div>
+            <div id="maxDelta" className="max-delta">Max Delta</div>
+            <div id="startTimeLbl" className="start-time-label">Start Time Label</div>
+            <div id="startLocationLbl" className="start-location-label">Start Location Label</div>
+            <div id="destinationQueryLbl" className="destination-query-label">Destination Query Label</div>
+            <div id="maxDeltaLbl" className="max-delta-label">Max Delta Label</div>
+            <div id="rerouteBtn" className="reroute-button">Submit</div>
+          </div>)
+    }
 }

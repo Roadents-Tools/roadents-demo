@@ -1,6 +1,93 @@
-.App {
-}
+/*@media (min-width: 1224px) {*/
+  .App {
+    display: grid;
+    height: 100vh;
+    grid-template-columns: 400px auto;
+    grid-template-rows: 80px auto 40px;
+  }
+  .input-section {
+    grid-column: 1/ -1;
+    grid-row: 1;
 
+    display: inline-grid;
+    grid-template-columns: 25% 25% 25% 12.5% 12.5%;
+    grid-template-rows: auto auto;
+
+    background-color: blue;
+  }
+  .start-time {
+    grid-column: 1;
+    text-align: center;
+    grid-row: 1;
+    margin-top: auto;
+  }
+  .start-time-label {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: center;
+    background-color: #7777ff;
+  }
+  .start-location {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: center;
+    margin-top: auto;
+  }
+  .start-location-label {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: center;
+    background-color: #7777ff;
+  }
+  .destination-query {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: center;
+    margin-top: auto;
+  }
+  .destination-query-label {
+    grid-column: 3;
+    grid-row: 2;
+    text-align: center;
+    background-color: #7777ff;
+  }
+  .max-delta {
+    grid-column: 4;
+    grid-row: 1;
+    text-align: center;
+    margin-top: auto;
+  }
+  .max-delta-label {
+    grid-column: 4;
+    grid-row: 2;
+    text-align: center;
+    vertical-align: top;
+    background-color: #7777ff;
+  }
+  .reroute-button {
+    grid-column: 5;
+    grid-row: 1/-1;
+    background-color: red;
+    text-align: center;
+    margin: auto;
+  }
+  .results {
+    grid-column: 1;
+    grid-row: 2 / -1;
+    background-color: green;
+  }
+  .map {
+    grid-column: 2;
+    grid-row: 2;
+    background-color: orange;
+  }
+  .sort {
+    background-color: magenta;
+    grid-column: 1/ -1;
+    grid-row: 3;
+  }
+
+/*}*/
 
 .App-intro {
   font-size: large;

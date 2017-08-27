@@ -2,11 +2,17 @@ import React, { Component } from 'react';
 import SplitPane from 'react-split-pane';
 import './App.css';
 import InputSection from './InputSection.js'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 class App extends Component {
+  static get contextTypes() {
+    return {
+      muiTheme: React.PropTypes.object
+    };
+  }
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
   }
 
   submit(e) {
@@ -15,18 +21,20 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-            <SplitPane split="horizontal" size="10%">
-                <div style={{height: "100%", width: "100%", "background-color": "blue"}}><InputSection onSubmit={this.submit}/></div>
-                <SplitPane split="horizontal" size="96%">
-                    <SplitPane split="vertical" size="25%">
-                    <div style={{height: "100%", width: "100%", "background-color" : "green"}}></div>
-                    <div style={{height: "100%", width: "100%", "background-color" : "orange"}}></div>
-                    </SplitPane>
-                    <div style={{height : "100%", width: "100%", "background-color" : "magenta"}}></div>
-                </SplitPane>
-            </SplitPane>
-      </div>
+      <MuiThemeProvider>
+        <div id="App" className="App">
+          <InputSection/>
+          <div id="Result" className="results">
+            <p>Result List</p>
+          </div>
+          <div id="Map" className="map">
+            <p>Map</p>
+          </div>
+          <div id="Sort" className="sort">
+            <p>Sort</p>
+          </div>
+        </div>
+      </MuiThemeProvider>
     );
   }
 }
