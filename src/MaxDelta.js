@@ -47,15 +47,10 @@ export default class MaxDelta extends Component {
     }
 
     render () {
-        return <div>
-            <select style={{display: "inline-block"}} onChange = {this.maxDeltaChange} value={this.state.maxDelta}>
+        return <div className="max-delta">
+            <select className="max-delta-select" onChange = {this.maxDeltaChange} value={this.state.maxDelta}>
                 {this.buildDeltaOptions()}
             </select>
-            <div style={{display: "inline-block"}}>
-                <button style={{display: "block", "font-size": "2%",}} onClick={this.incrementDelta}>/\</button>
-                <button style={{display: "block", "font-size": "2%"} }onClick={this.decrementDelta}>\/</button>
-            </div>
-            <button  style={{display: "inline-block"}} onClick={this.props.onSubmit}>Reroute</button>
         </div>
     }
 }

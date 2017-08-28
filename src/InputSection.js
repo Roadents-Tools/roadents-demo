@@ -54,15 +54,15 @@ export default class InputSection extends Component {
     render () {
         return (
           <div id="InputSection" className="input-section">
-            <div id="startTime" className="start-time">Start Time</div>
-            <div id="startLocation" className="start-location">Start Location</div>
-            <div id="destinationQuery" className="destination-query">Destination Query</div>
-            <div id="maxDelta" className="max-delta">Max Delta</div>
-            <div id="startTimeLbl" className="start-time-label">Start Time Label</div>
-            <div id="startLocationLbl" className="start-location-label">Start Location Label</div>
-            <div id="destinationQueryLbl" className="destination-query-label">Destination Query Label</div>
-            <div id="maxDeltaLbl" className="max-delta-label">Max Delta Label</div>
-            <div id="rerouteBtn" className="reroute-button">Submit</div>
+            <div id="startTime" className="start-time"><StartTime/></div>
+            <div id="startLocation" className="start-location"><StartLocation/></div>
+            <div id="destinationQuery" className="destination-query"><DestinationQuery/></div>
+            <div id="maxDelta" className="max-delta"><MaxDelta/></div>
+            <div id="startTimeLbl" className="start-time-label">Start Time</div>
+            <div id="startLocationLbl" className="start-location-label">Start Location</div>
+            <div id="destinationQueryLbl" className="destination-query-label">Destination Query</div>
+            <div id="maxDeltaLbl" className="max-delta-label">Max Delta</div>
+            <div id="rerouteBtn" className="reroute-button"><button>Reroute!</button></div>
           </div>)
     }
 }
