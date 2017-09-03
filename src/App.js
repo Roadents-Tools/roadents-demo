@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import SplitPane from 'react-split-pane';
 import './App.css';
 import InputSection from './InputSection.js'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import routes from './r1.js';
+import ResultList from './ResultList.js'
+import {displacement} from './SortUtils.js';
 
 class App extends Component {
   static get contextTypes() {
@@ -25,7 +27,7 @@ class App extends Component {
         <div id="App" className="App">
           <InputSection/>
           <div id="Result" className="results">
-            <p>Result List</p>
+            <ResultList query={"SSSS"} routes={routes} sort={(a, b) => {displacement(a) - displacement(b)}}/>
           </div>
           <div id="Map" className="map">
             <p>Map</p>

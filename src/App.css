@@ -109,6 +109,51 @@
   grid-column: 1;
   grid-row: 2 / -1;
   background-color: green;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: auto;
+}
+
+.result-list-item{
+  background-color: yellow;
+  font-size: 17px;
+  width: 400px;
+  border-top-style: solid;
+  border-top-width: 2px;
+}
+.result-list-item-nodelist {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.result-list-item-node {
+  background-color: green;
+  font-size: 16px;
+  width: 350px;
+  padding-left: 40px;
+  padding-top: 10px;
+
+}
+
+.result-list-item-header {
+  padding-top: 10px;
+  height: 150px;
+  padding-left: 25px;
+}
+
+.resultlistloadmore {
+  background-color: yellow;
+  padding-top: 10px;
+  font-size: 17px;
+  height: 40px;
+  text-align: center;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  border-width: 1px;
+}
+
+.resultlistspacer {
+  height: 50px;
 }
 
 .map {
