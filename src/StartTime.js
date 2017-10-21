@@ -27,12 +27,12 @@ export default class StartTime extends Component {
 
 
     hourChange(e) {
-        this.setState({"hour" : parseInt(e.target.value)});
+        this.setState({"hour" : parseInt(e.target.value, 10)});
         console.log("Setting start time to: " + JSON.stringify(this.getTime()));
     }
 
     minuteChange(e) {
-        this.setState({"minute": parseInt(e.target.value)});
+        this.setState({"minute": parseInt(e.target.value, 10)});
         console.log("Setting start time to: " + JSON.stringify(this.getTime()));
     }
 
@@ -66,4 +66,3 @@ export default class StartTime extends Component {
         </div>
     }
 }
-

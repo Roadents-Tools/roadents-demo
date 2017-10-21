@@ -15,7 +15,7 @@ export default class MaxDelta extends Component {
     }
 
     maxDeltaChange(e) {
-        this.setState({"maxDelta": parseInt(e.target.value)})
+        this.setState({"maxDelta": parseInt(e.target.value, 10)})
         console.log("Setting dest maxDelta: "+JSON.stringify(this.getDelta()));
     }
 

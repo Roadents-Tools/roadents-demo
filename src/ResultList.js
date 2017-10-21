@@ -1,43 +1,73 @@
 import React, {Component} from 'react';
 import ResultListItem from './ResultListItem.js';
+import deepEquals from 'deep-equals';
 
-const ADD_PER_LOAD = 10;
-const INITIAL_LOAD = 10;
+const ADD_PER_LOAD = 5;
+const INITIAL_LOAD = 5;
+const MAX_LOAD = 20;
 
 export default class ResultList extends Component{
 
   constructor(props) {
     super(props);
     this.loadMore = this.loadMore.bind(this);
-
+    this.addItem = this.addItem.bind(this);
+    this.reloadRoutes = this.reloadRoutes.bind(this);
+    this.items =[];
     this.state = {
-      loadedItems : this.props.routes.slice(0, INITIAL_LOAD)
+      loadedRoutes : [],
+      sortNum : 0,
+      lq : {}
     };
+    this.reloadRoutes();
+  }
+
+  reloadRoutes() {
+    if(deepEquals(this.props.query, this.state.lq)) {
+      console.log(`Missed reset.\nQ:\n${JSON.stringify(this.props.query)}\nLQ:\n${JSON.stringify(this.state.lq)}`);;
+      return;
+    }
+    console.log(`Hit reset.`);
+    this.offset = this.props.sortNum * MAX_LOAD;
+    this.setState({
+      loadedRoutes : this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD),
+      lq : this.props.query
+    });
+  }
+
+  addItem(item) {
+    this.items = [...this.items, item];
   }
 
   loadMore() {
-    if(this.state.loadedItems.length === this.props.routes.length) {
+    if(this.state.loadedRoutes.length === this.props.routes.length || this.state.loadedRoutes.length >= MAX_LOAD) {
       return;
     }
     var elm = document.getElementById('Result');
     elm.scrollTop=0;
     this.setState({
-      loadedItems : this.props.routes.slice(0, this.state.loadedItems.length + ADD_PER_LOAD)
+      loadedRoutes : this.props.routes.slice(this.offset, this.offset + this.state.loadedRoutes.length + ADD_PER_LOAD)
     });
-    console.log("Loading");
+  }
+
+  componentWillMount() {
+    this.reloadRoutes();
   }
 
   render() {
-    this.props.routes.sort(this.props.sort);
-    return (
+    this.reloadRoutes();
+    var rval = (
       <div id="resultlistcontainer">
-          {this.state.loadedItems
-            .map(rt => <ResultListItem route={rt} query={this.props.query} />)}
+          {
+            this.state.loadedRoutes
+              .map(rt => <ResultListItem route={rt} query={this.props.query.startAddress} ref={q => {this.addItem(q)}}/>)
+          }
           <div className="resultlistloadmore" onClick={this.loadMore}>
             Load More
           </div>
           <div className="resultlistspacer"/>
       </div>
-    )
+    );
+    return rval;
   }
 }

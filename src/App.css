@@ -108,7 +108,7 @@
 .results {
   grid-column: 1;
   grid-row: 2 / -1;
-  background-color: green;
+  background-color: purple;
   overflow-y: scroll;
   overflow-x: hidden;
   height: auto;
@@ -129,16 +129,27 @@
 .result-list-item-node {
   background-color: green;
   font-size: 16px;
-  width: 350px;
+  width: 340px;
   padding-left: 40px;
   padding-top: 10px;
+  padding-right: 25px;
 
+}
+
+.result-list-item-nodeHeader {
+  font-size: 20px;
+  background-color: cyan;
+  
 }
 
 .result-list-item-header {
   padding-top: 10px;
   height: 150px;
   padding-left: 25px;
+}
+
+.result-list-item-title {
+  margin-right: 25px;
 }
 
 .resultlistloadmore {
