@@ -4,7 +4,7 @@ import deepEquals from 'deep-equals';
 
 const ADD_PER_LOAD = 5;
 const INITIAL_LOAD = 5;
-const MAX_LOAD = 20;
+const MAX_LOAD = 15;
 
 export default class ResultList extends Component{
 
@@ -23,11 +23,12 @@ export default class ResultList extends Component{
   }
 
   reloadRoutes() {
-    if(deepEquals(this.props.query, this.state.lq)) {
+    if(deepEquals(this.props.query, this.state.lq) && (this.props.routes.length == 0 || this.state.loadedRoutes.length != 0)) {
       return;
-    }
+    };
     this.offset = this.props.sortNum * MAX_LOAD;
-    var nload = this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD);
+    var nload = this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD)
+      .filter((item) => {if(item.dest) return true; else return false;});
     this.props.onload(nload);
     this.setState({
       loadedRoutes : nload,
@@ -44,7 +45,10 @@ export default class ResultList extends Component{
       return;
     }
     var elm = document.getElementById('Result');
-    var nload = this.props.routes.slice(this.offset, this.offset + this.state.loadedRoutes.length + ADD_PER_LOAD)
+    var addSize = Math.min(this.state.loadedRoutes.length + ADD_PER_LOAD, MAX_LOAD);
+    var raw = this.props.routes.slice(this.offset, this.offset + addSize);
+    var nload = raw
+      .filter((item) => {if(item.dest) return true; else return false;});
     this.props.onload(nload);
     this.setState({
       loadedRoutes : nload
