@@ -6,8 +6,9 @@ import routes from './testroutes6.js';
 import ResultList from './ResultList.js'
 import RouteMap from './RouteMap.js';
 import {displacement, nodeCount} from './SortUtils.js';
-import {delay} from './PromiseUtils.js';
+import {delay, call} from './PromiseUtils.js';
 
+const BASE_URL = 'http://localhost:4567/demo';
 class App extends Component {
   static get contextTypes() {
     return {
@@ -37,21 +38,25 @@ class App extends Component {
   }
 
   submit(e) {
-    delay(0 * 1000, routes.map(rt => {
-      var nrt = JSON.parse(JSON.stringify(rt));
-      nrt.dest.name = nrt.dest.name + `(${e.query})`;
-      return nrt;
-    }))
-    .then(rts => {
-        this.setState({
-          "routes" : rts,
-          "query" : e
-        })
-      }
-    )
-    .catch((err) => {console.log(err)})
+    call(this.buildUrl(e))
+      .then(rts => rts.map(rt => {
+        var nrt = JSON.parse(JSON.stringify(rt));
+        if(nrt.dest) nrt.dest.name = nrt.dest.name + `(${e.query})`;
+        return nrt;
+      }))
+      .catch((err) => {console.log(err);})
+      .then(rts => {
+          this.setState({
+            "routes" : rts,
+            "query" : e
+          })
+      })
+      .catch((err) => {console.log(err)})
   }
 
+  buildUrl(query) {
+    return `${BASE_URL}?latitude=${query.startLocation.latitude}&longitude=${query.startLocation.longitude}&starttime=${query.startTime}&timedelta=${query.maxDelta}&type=${query.query}`;
+  }
 
   render() {
     return (
@@ -59,7 +64,7 @@ class App extends Component {
         <div id="App" className="App">
           <InputSection onSubmit={this.submit}/>
           <div id="Result" className="results">
-            <ResultList query={this.state.query} routes={this.state.routes} sortNum={1} onload = {rts => this.setState({loaded : rts})} onselect={i => this.setState({selected : i})}/>
+            <ResultList query={this.state.query} routes={this.state.routes} sortNum={3} onload = {rts => this.setState({loaded : rts})} onselect={i => this.setState({selected : i})}/>
           </div>
           <div id="Map" className="map">
             <RouteMap routes={this.state.loaded} selected={this.state.selected}/>

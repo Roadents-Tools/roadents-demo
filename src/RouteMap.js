@@ -83,7 +83,7 @@ export default class RouteMap extends Component {
       fillColor: selected ? START_FILL_COLOR_SELECTED : START_FILL_COLOR_NORMAL,
       fillOpacity: 1,
       center: path[0],
-      zIndex: selected ? 2 : 1,
+      zIndex: 20,
       radius: 60 * Math.pow(1.5, 13 - this.map.getZoom())
     });
     var destCircle = new google.maps.Circle({
@@ -136,6 +136,7 @@ export default class RouteMap extends Component {
 
     if( !this.props.routes || this.props.routes.length == 0) {
       this.map.panTo(DEFAULT_POS);
+      this.center = DEFAULT_POS;
       return;
     }
 
