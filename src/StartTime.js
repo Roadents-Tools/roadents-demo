@@ -11,7 +11,6 @@ export default class StartTime extends Component {
         this.getTime = this.getTime.bind(this);
 
         var d = new Date();
-        console.log("DDDDD "+d+" DDDDD")
         var hour = d.getHours();
         var minute = d.getMinutes();
         var ampm = hour < 12 ? "AM" : "PM";
@@ -28,17 +27,14 @@ export default class StartTime extends Component {
 
     hourChange(e) {
         this.setState({"hour" : parseInt(e.target.value, 10)});
-        console.log("Setting start time to: " + JSON.stringify(this.getTime()));
     }
 
     minuteChange(e) {
         this.setState({"minute": parseInt(e.target.value, 10)});
-        console.log("Setting start time to: " + JSON.stringify(this.getTime()));
     }
 
     pmChange(e) {
         this.setState({"pm": e.target.value});
-        console.log("Setting start time to: " + JSON.stringify(this.getTime()));
     }
 
     getTime() {

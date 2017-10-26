@@ -13,7 +13,6 @@ export default class StartLocation extends Component {
 
     locationChange(e) {
         this.setState({"address": e.target.value})
-        console.log("Setting start location: "+JSON.stringify(this.getLocation()));
     }
 
     getLocation() {

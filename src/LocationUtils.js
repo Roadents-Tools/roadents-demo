@@ -8,19 +8,14 @@ var geo = Geocoder({
 var geostore = {};
 
 export function geocode(address, i = 0) {
-  console.log(i);
   if(i > 2) {
     console.log("Too many retries.");
     return Promise.reject("Too many retries.");
-  }
-  if(true) {
-    return Promise.resolve({latitude: 30, longitude: -72});
   }
   return Promise.resolve(true)
     .then(b => {
       var cached = geostore[address];
       if(cached) {
-        console.log("Hit." + JSON.stringify(cached));
         return cached;
       }
       else return new Promise(function(resolve, reject) {

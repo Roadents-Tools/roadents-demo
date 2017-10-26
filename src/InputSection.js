@@ -40,7 +40,6 @@ export default class InputSection extends Component {
         //Since geocoding is done Async, we return a promise.
         var praw = this.p.getLocation();
         return geocode(praw)
-          .then(loc => {console.log("hello"); return loc;})
           .then(loc =>{ return {
             "startTime" : startTime,
             "startLocation" : loc,
