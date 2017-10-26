@@ -11,12 +11,11 @@ export default class MaxDelta extends Component {
         this.incrementDelta = this.incrementDelta.bind(this);
         this.decrementDelta = this.decrementDelta.bind(this);
 
-        this.state = {"maxDelta" : 15};
+        this.state = {"maxDelta" : 5};
     }
 
     maxDeltaChange(e) {
         this.setState({"maxDelta": parseInt(e.target.value, 10)})
-        console.log("Setting dest maxDelta: "+JSON.stringify(this.getDelta()));
     }
 
     getDelta() {
@@ -24,7 +23,7 @@ export default class MaxDelta extends Component {
     }
 
     buildDeltaOptions() {
-        return [this.state.maxDelta, 15, 30, 45, 60, 90]
+        return [this.state.maxDelta, 5, 10, 15, 20, 25, 30]
             .map(i => {
                 if(i === 60) return {label : '1 hour', value : i};
                 else if(i > 60 && i < 120) return {label: Math.floor(i/60) +' hour '+i%60+' minutes', value : i}
