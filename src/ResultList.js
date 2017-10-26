@@ -24,10 +24,8 @@ export default class ResultList extends Component{
 
   reloadRoutes() {
     if(deepEquals(this.props.query, this.state.lq)) {
-      console.log(`Missed reset.\nQ:\n${JSON.stringify(this.props.query)}\nLQ:\n${JSON.stringify(this.state.lq)}`);;
       return;
     }
-    console.log(`Hit reset.`);
     this.offset = this.props.sortNum * MAX_LOAD;
     this.setState({
       loadedRoutes : this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD),
