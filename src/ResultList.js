@@ -27,8 +27,10 @@ export default class ResultList extends Component{
       return;
     }
     this.offset = this.props.sortNum * MAX_LOAD;
+    var nload = this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD);
+    this.props.onload(nload);
     this.setState({
-      loadedRoutes : this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD),
+      loadedRoutes : nload,
       lq : this.props.query
     });
   }
@@ -42,9 +44,10 @@ export default class ResultList extends Component{
       return;
     }
     var elm = document.getElementById('Result');
-    elm.scrollTop=0;
+    var nload = this.props.routes.slice(this.offset, this.offset + this.state.loadedRoutes.length + ADD_PER_LOAD)
+    this.props.onload(nload);
     this.setState({
-      loadedRoutes : this.props.routes.slice(this.offset, this.offset + this.state.loadedRoutes.length + ADD_PER_LOAD)
+      loadedRoutes : nload
     });
   }
 
@@ -58,7 +61,7 @@ export default class ResultList extends Component{
       <div id="resultlistcontainer">
           {
             this.state.loadedRoutes
-              .map(rt => <ResultListItem route={rt} query={this.props.query.startAddress} ref={q => {this.addItem(q)}}/>)
+              .map((rt, i) => <ResultListItem route={rt} onselect={(rt) => {if(this.props.onselect) this.props.onselect(i);}} query={this.props.query.startAddress} ref={q => {this.addItem(q)}}/>)
           }
           <div className="resultlistloadmore" onClick={this.loadMore}>
             Load More

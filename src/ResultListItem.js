@@ -14,6 +14,9 @@ export default class ResultListItem extends Component{
   }
 
   toggleNodes() {
+    if(!this.state.showNodes && this.props.onselect) {
+      this.props.onselect(this.props.route);
+    }
     this.setState({showNodes: !this.state.showNodes});
   }
 

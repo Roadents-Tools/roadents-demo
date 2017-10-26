@@ -1,14 +1,21 @@
 
 import React, { Component } from 'react';
 
-const PATH_COLOR_NORMAL = '#FF0000';
+const PATH_COLOR_NORMAL = '#000000';
 const PATH_COLOR_SELECTED = '#00FF00';
-const START_BORDER_COLOR_NORMAL = '#000000';
-const START_BORDER_COLOR_SELECTED = '#000F0F';
+const START_BORDER_COLOR_NORMAL = '#FFD700';
+const START_BORDER_COLOR_SELECTED = '#FFDD00';
+const START_FILL_COLOR_NORMAL = '#00FF00';
+const START_FILL_COLOR_SELECTED = '#00FF00';
 const STATION_BORDER_COLOR_NORMAL = '#00F0F0';
-const STATION_BORDER_COLOR_SELECTED = '#000F0F';
-const DEST_BORDER_COLOR_NORMAL = '#FF00FF';
-const DEST_BORDER_COLOR_SELECTED = '#000F0F';
+const STATION_BORDER_COLOR_SELECTED = '#880000';
+const DEST_BORDER_COLOR_NORMAL = '#FF0000';
+const DEST_BORDER_COLOR_SELECTED = '#0000FF';
+const DEST_FILL_COLOR_NORMAL = '#FF0000';
+const DEST_FILL_COLOR_SELECTED = '#0000FF';
+
+const DEFAULT_ZOOM = 14;
+const DEFAULT_POS = {lat : 41, lng: -74};
 
 var google = window.google;
 
@@ -21,11 +28,9 @@ export default class RouteMap extends Component {
     this.recalculateZoom = this.recalculateZoom.bind(this);
     this.lines = [];
     this.circles = [];
-    this.state = {
-      center : {
-        latitude : 0,
-        longitude : 0
-      }
+    this.center = {
+      latitude : 0,
+      longitude : 0
     }
     this.loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyB0pBdXuC4VRte73qnVtE5pLmxNs3ju0Gg&callback=initMap");
   }
@@ -55,15 +60,14 @@ export default class RouteMap extends Component {
   }
 
   buildRoutePolyline(route, selected) {
-    var color = PATH_COLOR_NORMAL;
-    if(selected) color = PATH_COLOR_SELECTED;
+    var color = !selected ? PATH_COLOR_NORMAL :  PATH_COLOR_SELECTED;
     return new google.maps.Polyline({
       path : this.routeToPath(route),
       geodesic : false,
       strokeColor : color,
       strokeOpacity : 1.0,
-      strokeWeight : 2,
-      zIndex : -1
+      strokeWeight : 2 * Math.pow(1.3, this.map.getZoom() - 13),
+      zIndex : selected ? 0 : -1
     });
   }
 
@@ -76,21 +80,21 @@ export default class RouteMap extends Component {
       strokeColor : selected ? START_BORDER_COLOR_SELECTED : START_BORDER_COLOR_NORMAL,
       strokeOpacity: 1,
       strokeWeight: 2,
-      fillColor: '#FFFFFF',
+      fillColor: selected ? START_FILL_COLOR_SELECTED : START_FILL_COLOR_NORMAL,
       fillOpacity: 1,
       center: path[0],
-      zIndex: 1,
-      radius: 60
+      zIndex: selected ? 2 : 1,
+      radius: 60 * Math.pow(1.5, 13 - this.map.getZoom())
     });
     var destCircle = new google.maps.Circle({
       strokeColor : selected ? DEST_BORDER_COLOR_SELECTED : DEST_BORDER_COLOR_NORMAL,
       strokeOpacity: 1,
       strokeWeight: 2,
-      fillColor: '#FFFFFF',
+      fillColor: selected ? DEST_FILL_COLOR_SELECTED : DEST_FILL_COLOR_NORMAL,
       fillOpacity: 1,
       center: path[path.length -1],
-      zIndex: 1,
-      radius: 60
+      zIndex: selected ? 2 : 1,
+      radius: 60 * Math.pow(1.5, 13 - this.map.getZoom())
     });
     var rest = path.slice(1, path.length -1)
       .map(pt => new google.maps.Circle({
@@ -100,8 +104,8 @@ export default class RouteMap extends Component {
         fillColor: '#FFFFFF',
         fillOpacity: 1,
         center: pt,
-        zIndex: 1,
-        radius: 60
+        zIndex: selected ? 2 : 1,
+        radius: 60 * Math.pow(1.5, 13 - this.map.getZoom())
       }));
       return [startCircle, ...rest, destCircle];
   }
@@ -109,9 +113,10 @@ export default class RouteMap extends Component {
   initMap() {
     google = window.google;
     this.map = new google.maps.Map(document.getElementById('mapframe'),{
-      zoom : 13,
-      center : {lat : 0, lng : 0},
-      mapTypeId : 'terrain'
+      zoom : DEFAULT_ZOOM,
+      center : DEFAULT_POS,
+      mapTypeId : 'terrain',
+
     });
     google.maps.event.addListener(this.map, 'zoom_changed', this.recalculateZoom);
     this.updateMap();
@@ -129,11 +134,16 @@ export default class RouteMap extends Component {
     this.lines = [];
     this.circles.forEach(c => c.setMap(null))
 
+    if( !this.props.routes || this.props.routes.length == 0) {
+      this.map.panTo(DEFAULT_POS);
+      return;
+    }
+
     var avgpos = this.avgLatLng(this.props.routes);
-    if(this.state.center.latitude !== avgpos.latitude && this.state.center.longitude !== avgpos.longitude) {
+    if(this.center.latitude !== avgpos.latitude && this.center.longitude !== avgpos.longitude) {
       this.map.panTo({lat : avgpos.latitude, lng : avgpos.longitude});
-      this.map.setZoom(13);
-      this.setState({center : avgpos})
+      this.map.setZoom(DEFAULT_ZOOM);
+      this.center = avgpos;
     }
 
     for(var i = 0; i < this.props.routes.length; i++) {
