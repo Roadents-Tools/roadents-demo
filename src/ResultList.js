@@ -16,23 +16,26 @@ export default class ResultList extends Component{
     this.items =[];
     this.state = {
       loadedRoutes : [],
-      sortNum : 0,
-      lq : {}
+      lq : {},
+      sortNum : this.props.sortNum
     };
     this.reloadRoutes();
   }
 
   reloadRoutes() {
-    if(deepEquals(this.props.query, this.state.lq) && (this.props.routes.length == 0 || this.state.loadedRoutes.length != 0)) {
-      return;
-    };
+    var die = deepEquals(this.props.query, this.state.lq) && (this.props.length === 0 || this.state.loadedRoutes !== 0);
+    if(this.props.sortNum !== this.state.sortNum) {
+      die = false;
+    }
+    if(die) return;
     this.offset = this.props.sortNum * MAX_LOAD;
     var nload = this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD)
       .filter((item) => {if(item.dest) return true; else return false;});
     this.props.onload(nload);
     this.setState({
       loadedRoutes : nload,
-      lq : this.props.query
+      lq : this.props.query,
+      sortNum : this.props.sortNum
     });
   }
 

@@ -5,6 +5,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import routes from './testroutes6.js';
 import ResultList from './ResultList.js'
 import RouteMap from './RouteMap.js';
+import Sort from './Sort.js';
 import {displacement, nodeCount} from './SortUtils.js';
 import {delay, call} from './PromiseUtils.js';
 
@@ -59,18 +60,19 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.sortNum);
     return (
       <MuiThemeProvider>
         <div id="App" className="App">
           <InputSection onSubmit={this.submit}/>
           <div id="Result" className="results">
-            <ResultList query={this.state.query} routes={this.state.routes} sortNum={3} onload = {rts => this.setState({loaded : rts})} onselect={i => this.setState({selected : i})}/>
+            <ResultList query={this.state.query} routes={this.state.routes} sortNum={this.state.sortNum} onload = {rts => this.setState({loaded : rts})} onselect={i => this.setState({selected : i})}/>
           </div>
           <div id="Map" className="map">
             <RouteMap routes={this.state.loaded} selected={this.state.selected}/>
           </div>
           <div id="Sort" className="sort">
-            <p>Sort</p>
+            <Sort onChange={s => this.setState({sortNum : s})}/>
           </div>
         </div>
       </MuiThemeProvider>

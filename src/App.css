@@ -181,12 +181,14 @@
   background-color: magenta;
   grid-column: 1/ -1;
   grid-row: 3;
-  display: inline-grid;
-  grid-template-columns: 25% 25% 25% 25%;
-  grid-template-rows: auto;
 }
 
 select {
   font-size: 14px;
   text-align: center;
+}
+
+.sort-dropdown {
+  margin-top: 5px;
+  font-size: 16px;
 }
