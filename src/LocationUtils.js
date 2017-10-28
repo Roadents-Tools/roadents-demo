@@ -1,10 +1,29 @@
-import Geocoder from 'google-geocoder';
 import {Promise} from 'es6-promise';
+import callReq from 'request-promise';
 
-var geo = Geocoder({
-  key: 'AIzaSyD3vHYwq7a3pvkeWZZrcZ7M9ipi4ZI3t4k'
-});
-
+var geocoder = {
+  geocode : function(address) {
+    var encaddr = encodeURIComponent(address);
+    var req = {
+      json : true,
+      qs : {
+        address :encaddr,
+        benchmark : 9,
+        format : 'json'
+      },
+      headers: {
+        'Origin' : 'Donut-Demo'
+      },
+      method : 'GET',
+      url: 'https://cors-anywhere.herokuapp.com/https://geocoding.geo.census.gov/geocoder/locations/onelineaddress',
+    }
+    return callReq(req)
+      .then(result => {return {
+        latitude : result.result.addressMatches[0].coordinates.y,
+        longitude : result.result.addressMatches[0].coordinates.x
+      }})
+  }
+}
 var geostore = {};
 
 export function geocode(address, i = 0) {
@@ -18,14 +37,8 @@ export function geocode(address, i = 0) {
       if(cached) {
         return cached;
       }
-      else return new Promise(function(resolve, reject) {
-        geo.find(address, function (err, resp) {
-          if(err !== null) return reject(err);
-          resolve(resp);
-        })
-      })
+      else return geocoder.geocode(address);
     })
-
     .catch(err => {
       if(geostore[address]) return Promise.resolve(geostore[address]);
       else if(err.status === "OVER_QUERY_LIMIT") {
@@ -40,7 +53,7 @@ export function geocode(address, i = 0) {
     .catch((err) => {console.log(err);})
 
     .then(it => {
-      return {latitude: it[0].location.lat, longitude : it[0].location.lng};
+      return {latitude: it.latitude, longitude : it.longitude};
     })
     .catch((err) => {console.log(err);});
 
