@@ -2,17 +2,19 @@
 import React, { Component } from 'react';
 
 const PATH_COLOR_NORMAL = '#000000';
-const PATH_COLOR_SELECTED = '#00FF00';
-const START_BORDER_COLOR_NORMAL = '#FFD700';
-const START_BORDER_COLOR_SELECTED = '#FFDD00';
-const START_FILL_COLOR_NORMAL = '#00FF00';
-const START_FILL_COLOR_SELECTED = '#00FF00';
-const STATION_BORDER_COLOR_NORMAL = '#00F0F0';
-const STATION_BORDER_COLOR_SELECTED = '#880000';
-const DEST_BORDER_COLOR_NORMAL = '#FF0000';
-const DEST_BORDER_COLOR_SELECTED = '#0000FF';
-const DEST_FILL_COLOR_NORMAL = '#FF0000';
-const DEST_FILL_COLOR_SELECTED = '#0000FF';
+const PATH_COLOR_SELECTED = '#0070C0';
+const PATH_COLOR_TRANSIT_NORMAL = '#000000';
+const PATH_COLOR_TRANSIT_SELECTED = '#0070C0';
+const START_BORDER_COLOR_NORMAL = '#000000';
+const START_BORDER_COLOR_SELECTED = '#000000';
+const START_FILL_COLOR_NORMAL = '#FF0000';
+const START_FILL_COLOR_SELECTED = '#FF0000';
+const STATION_BORDER_COLOR_NORMAL = '#000000';
+const STATION_BORDER_COLOR_SELECTED = '#000000';
+const DEST_BORDER_COLOR_NORMAL = '#000000';
+const DEST_BORDER_COLOR_SELECTED = '#000000';
+const DEST_FILL_COLOR_NORMAL = '#00FF00';
+const DEST_FILL_COLOR_SELECTED = '#0066FF';
 
 const DEFAULT_ZOOM = 14;
 const DEFAULT_POS = {lat : 41, lng: -74};
@@ -54,21 +56,56 @@ export default class RouteMap extends Component {
 
   routeToPath(route) {
     return route.route
-      .map(nd => nd.pt)
-      .map(item => item[Object.keys(item)[0]])
-      .map(item => {return {lat : item.latitude, lng : item.longitude}});
+      .map(nd => {return {pt : nd.pt, walk : nd.walkTimeFromPrev > 0}})
+      .map(item => {return {
+        lat : item.pt[Object.keys(item.pt)[0]].latitude,
+        lng : item.pt[Object.keys(item.pt)[0]].longitude,
+        walk : item.walk
+       }})
   }
 
   buildRoutePolyline(route, selected) {
-    var color = !selected ? PATH_COLOR_NORMAL :  PATH_COLOR_SELECTED;
-    return new google.maps.Polyline({
-      path : this.routeToPath(route),
-      geodesic : false,
-      strokeColor : color,
-      strokeOpacity : 1.0,
-      strokeWeight : 2 * Math.pow(1.3, this.map.getZoom() - 13),
-      zIndex : selected ? 0 : -1
-    });
+    var rt = this.routeToPath(route);
+    var rval = [];
+    const pathweight = this.getWalkingWeight(this.map.getZoom());
+    for(var i = 1; i < rt.length; i++) {
+      var path = [rt[i], rt[i-1]];
+      if(rt[i].walk) {
+        var topush = new google.maps.Polyline({
+          path : path,
+          geodesic : false,
+          strokeColor : selected ? PATH_COLOR_SELECTED : PATH_COLOR_NORMAL,
+          strokeOpacity : 1.0,
+          strokeWeight : pathweight,
+          zIndex : selected ? 0 : -1
+        });
+        topush.selected = selected;
+        topush.walk = true;
+        rval.push(topush);
+      }
+      else {
+        var topush = new google.maps.Polyline({
+          path : path,
+          geodesic : false,
+          strokeOpacity : 0,
+          zIndex : selected ? 0 : -1,
+          icons : [{
+            icon : {
+              path : 'M 0,-1 0,1',
+              strokeColor : selected ? PATH_COLOR_TRANSIT_SELECTED : PATH_COLOR_TRANSIT_NORMAL,
+              strokeOpacity : 1.0,
+              strokeWeight : pathweight
+            },
+            offset : '0',
+            repeat : (4 * pathweight) + 'px'
+          }]
+        })
+        topush.selected = selected;
+        topush.walk = false;
+        rval.push(topush);
+      }
+    }
+    return rval;
   }
 
   buildStationCircles(route, selected) {
@@ -84,7 +121,7 @@ export default class RouteMap extends Component {
       fillOpacity: 1,
       center: path[0],
       zIndex: 20,
-      radius: 60 * Math.pow(1.5, 13 - this.map.getZoom())
+      radius: this.getCircleRad(this.map.getZoom())
     });
     var destCircle = new google.maps.Circle({
       strokeColor : selected ? DEST_BORDER_COLOR_SELECTED : DEST_BORDER_COLOR_NORMAL,
@@ -94,7 +131,7 @@ export default class RouteMap extends Component {
       fillOpacity: 1,
       center: path[path.length -1],
       zIndex: selected ? 2 : 1,
-      radius: 60 * Math.pow(1.5, 13 - this.map.getZoom())
+      radius: this.getCircleRad(this.map.getZoom())
     });
     var rest = path.slice(1, path.length -1)
       .map(pt => new google.maps.Circle({
@@ -105,7 +142,7 @@ export default class RouteMap extends Component {
         fillOpacity: 1,
         center: pt,
         zIndex: selected ? 2 : 1,
-        radius: 60 * Math.pow(1.5, 13 - this.map.getZoom())
+        radius: this.getCircleRad(this.map.getZoom())
       }));
       return [startCircle, ...rest, destCircle];
   }
@@ -123,10 +160,39 @@ export default class RouteMap extends Component {
   }
 
   recalculateZoom() {
-    const circlerad = 60 * Math.pow(1.5, 13 - this.map.getZoom());
-    const pathweight = 2 * Math.pow(1.3, this.map.getZoom() - 13);
-    this.lines.forEach(l => l.setOptions({strokeWeight : pathweight}))
+    console.log(this.map.getZoom());
+    const circlerad = this.getCircleRad(this.map.getZoom());
+    const pathweight = this.getWalkingWeight(this.map.getZoom());
+    this.lines.forEach(l => {
+      if(l.walk) {
+        l.setOptions({strokeWeight : pathweight})
+      }
+      else {
+          var icons = [{
+            icon : {
+              path : 'M 0,-1 0,1',
+              strokeColor : PATH_COLOR_TRANSIT_NORMAL,
+              strokeOpacity : 1.0,
+              strokeWeight : pathweight
+            },
+            offset : '0',
+            repeat : (4 * pathweight) + 'px'
+          }];
+          if(l.selected) {
+            icons[0].icon.strokeColor = PATH_COLOR_TRANSIT_SELECTED;
+          }
+          console.log(icons[0].icon.strokeWeight);
+          l.setOptions({icons : icons});
+      }
+    })
     this.circles.forEach(c => c.setOptions({radius : circlerad}))
+  }
+
+  getCircleRad(z) {
+    return 60 * Math.pow(1.5, 13 - z);
+  }
+  getWalkingWeight(z) {
+    return 2 * Math.pow(1.3, z - 13);
   }
 
   updateMap() {
@@ -148,9 +214,11 @@ export default class RouteMap extends Component {
     }
 
     for(var i = 0; i < this.props.routes.length; i++) {
-      var line = this.buildRoutePolyline(this.props.routes[i], i === this.props.selected);
-      line.setMap(this.map);
-      this.lines.push(line);
+      var linek = this.buildRoutePolyline(this.props.routes[i], i === this.props.selected);
+      linek.forEach(line => {
+        line.setMap(this.map);
+        this.lines.push(line);
+      });
       var circles = this.buildStationCircles(this.props.routes[i], i=== this.props.selected);
       circles.forEach(c => {
         c.setMap(this.map);
