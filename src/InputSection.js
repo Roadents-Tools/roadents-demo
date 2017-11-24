@@ -70,7 +70,7 @@ export default class InputSection extends Component {
             <div id="startLocationLbl" className="start-location-label">Start Location</div>
             <div id="destinationQueryLbl" className="destination-query-label">Destination Query</div>
             <div id="maxDeltaLbl" className="max-delta-label">Max Delta</div>
-            <div id="rerouteBtn" className="reroute-button"><button onClick={this.submit}>Reroute!</button></div>
+            <div id="rerouteBtn" className="reroute-button"><button id="reroute-button-id" onClick={this.submit}>Reroute!</button></div>
           </div>)
     }
 }
