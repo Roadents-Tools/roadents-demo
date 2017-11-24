@@ -51,10 +51,14 @@ export default class ResultListItem extends Component{
     }
 
   generateHeader(showNodes) {
+    var header = this.props.route.dest.name;
+    if(this.props.route.dest.address) {
+      header += " - " + this.props.route.dest.address;
+    }
     if (!showNodes) {
       return <div className="result-list-item-header" onClick={this.toggleNodes}>
         <div className="result-list-item-title">
-          {this.props.route.dest.name + " - " +this.props.route.dest.address}
+          {header}
         </div>
         <div className="result-list-item-subtitle">
           {Math.round(totalTime(this.props.route)/(1000 * 60))+" mins, "+displacement(this.props.route).toFixed(2)+" km"}
@@ -65,7 +69,7 @@ export default class ResultListItem extends Component{
     else {
       return <div className="result-list-item-header" onClick={this.toggleNodes}>
         <div className="result-list-item-title">
-          {this.props.route.dest.name + " - " +this.props.route.dest.address}
+          {header}
         </div>
         <div className="result-list-item-subtitle">
           {Math.round(totalTime(this.props.route)/(1000 * 60))+" mins, "+displacement(this.props.route).toFixed(2)+" km"}
@@ -77,11 +81,13 @@ export default class ResultListItem extends Component{
 
 
   generateNodes() {
-    return this.getInstructions(this.props.route.route).map(nd => {
+    return this.getInstructions(this.props.route.route)
+    .filter((instr, i) => {return !(i > 0 && instr.startsWith("Start"))})
+    .map(nd => {
       return <div className="result-list-item-node">
         {nd}
       </div>
-    });
+    })
   }
 
   render() {
