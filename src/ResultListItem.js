@@ -28,21 +28,21 @@ export default class ResultListItem extends Component{
       var endpt = node.pt[Object.keys(node.pt)[0]].name;
       if(node.walkTimeFromPrev !== 0) {
         var mins = Math.round(node.walkTimeFromPrev/60000);
-        var secs = Math.round((node.walkTimeFromPrev / 1000) % 60);
+        var secs = Math.round((node.walkTimeFromPrev / 1000) % 59);
         if(mins > 0) return `Walk for ${mins} minutes, ${secs} seconds to ${endpt}`;
         else return `Walk for ${secs} seconds to ${endpt}`;
       }
       else if(node.travelTimeFromPrev !==0){
         var waitmins = Math.round(node.waitTimeFromPrev/60000);
-        var waitsecs = Math.round((node.waitTimeFromPrev / 1000) % 60);
+        var waitsecs = Math.round((node.waitTimeFromPrev / 1000) % 59);
         var tmins = Math.round(node.travelTimeFromPrev/60000);
-        var tsecs = Math.round((node.travelTimeFromPrev / 1000) % 60);
+        var tsecs = Math.round((node.travelTimeFromPrev / 1000) % 59);
 
         var rval = "Wait for "
         if(waitmins > 0) rval += `${waitmins} minutes, `;
         rval+= `${waitsecs} seconds and then ride for `;
         if(tmins > 0) rval += `${tmins} minutes, `;
-        rval += `${tsecs} seconds.`;
+        rval += `${tsecs} seconds to ${endpt}.`;
         return rval;
       }
       else {
