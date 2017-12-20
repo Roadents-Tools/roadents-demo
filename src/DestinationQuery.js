@@ -8,7 +8,7 @@ export default class DestinationQuery extends Component {
         this.queryChange = this.queryChange.bind(this);
         this.getQuery = this.getQuery.bind(this);
 
-        this.state = {"query" : "Ex: Walmart"};
+        this.state = {"query" : "Restaurant"};
     }
 
     queryChange(e) {

@@ -8,7 +8,7 @@ export default class StartLocation extends Component {
         this.locationChange = this.locationChange.bind(this);
         this.getLocation = this.getLocation.bind(this);
 
-        this.state = {"address" : "Ex: 1600 Pennsylvania Avenue, Washington DC"};
+        this.state = {"address" : "40.74702, -73.99097"};
     }
 
     locationChange(e) {
