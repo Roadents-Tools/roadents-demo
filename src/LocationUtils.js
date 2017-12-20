@@ -27,6 +27,14 @@ var geocoder = {
 var geostore = {};
 
 export function geocode(address, i = 0) {
+  let splitaddr = address.split(",");
+  if(splitaddr.length === 2) {
+    let lat = parseFloat(splitaddr[0])
+    let lng = parseFloat(splitaddr[1])
+    if(!isNaN(lat) && !isNaN(lng)) {
+      return Promise.resolve({latitude : lat, longitude : lng})
+    }
+  }
   if(i > 2) {
     console.log("Too many retries.");
     return Promise.reject("Too many retries.");
