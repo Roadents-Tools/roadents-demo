@@ -21,28 +21,25 @@ export default class ResultListItem extends Component{
   }
 
   getInstructions(nodes) {
-    return nodes.map(nd => this.getInstruction(nd));
+    return [{"step_type" : "start"}].concat(nodes).map(nd => this.getInstruction(nd));
   }
 
   getInstruction(node) {
-      var endpt = node.pt[Object.keys(node.pt)[0]].name;
-      if(node.walkTimeFromPrev !== 0) {
-        var mins = Math.round(node.walkTimeFromPrev/60000);
-        var secs = Math.round((node.walkTimeFromPrev / 1000) % 59);
+      if(node["step_type"] === "walk") {
+        var endpt = node.end_pt.name;
+        var mins = Math.round(node.total_time/60);
+        var secs = Math.round((node.total_time) % 59);
         if(mins > 0) return `Walk for ${mins} minutes, ${secs} seconds to ${endpt}`;
         else return `Walk for ${secs} seconds to ${endpt}`;
       }
-      else if(node.travelTimeFromPrev !==0){
-        var waitmins = Math.round(node.waitTimeFromPrev/60000);
-        var waitsecs = Math.round((node.waitTimeFromPrev / 1000) % 59);
-        var tmins = Math.round(node.travelTimeFromPrev/60000);
-        var tsecs = Math.round((node.travelTimeFromPrev / 1000) % 59);
+      else if(node["step_type"] === "transit"){
+        var endpt = node.end_pt.name;
+        var waitmins = Math.round(node.wait_time/60);
+        var waitsecs = Math.round((node.wait_time) % 59);
+        var tmins = Math.round(node.travel_time/60);
+        var tsecs = Math.round((node.travel_time) % 59);
 
-        var rval = "Wait for "
-        if(waitmins > 0) rval += `${waitmins} minutes, `;
-        rval+= `${waitsecs} seconds and then ride for `;
-        if(tmins > 0) rval += `${tmins} minutes, `;
-        rval += `${tsecs} seconds to ${endpt}.`;
+        var rval = `Wait for the ${node.agency} ${node.route} ${node.transit_type} and then ride for ${node.stops} stops. This should take around ${Math.round(node.total_time/60)} minutes.`
         return rval;
       }
       else {
@@ -51,9 +48,9 @@ export default class ResultListItem extends Component{
     }
 
   generateHeader(showNodes) {
-    var header = this.props.route.dest.name;
-    if(this.props.route.dest.address) {
-      header += " - " + this.props.route.dest.address;
+    var header = this.props.route.end_pt.name;
+    if(this.props.route.end_pt.address) {
+      header += " - " + this.props.route.end_pt.address;
     }
     if (!showNodes) {
       return <div className="result-list-item-header" onClick={this.toggleNodes}>
@@ -61,7 +58,7 @@ export default class ResultListItem extends Component{
           {header}
         </div>
         <div className="result-list-item-subtitle">
-          {Math.round(totalTime(this.props.route)/(1000 * 60))+" mins, "+displacement(this.props.route).toFixed(2)+" km"}
+          {Math.round(totalTime(this.props.route)/(60))+" mins, "+displacement(this.props.route).toFixed(2)+" km"}
         </div>
       </div>
 
@@ -72,7 +69,7 @@ export default class ResultListItem extends Component{
           {header}
         </div>
         <div className="result-list-item-subtitle">
-          {Math.round(totalTime(this.props.route)/(1000 * 60))+" mins, "+displacement(this.props.route).toFixed(2)+" km"}
+          {Math.round(totalTime(this.props.route)/(60))+" mins, "+displacement(this.props.route).toFixed(2)+" km"}
         </div>
       </div>
 
@@ -81,7 +78,7 @@ export default class ResultListItem extends Component{
 
 
   generateNodes() {
-    return this.getInstructions(this.props.route.route)
+    return this.getInstructions(this.props.route.steps)
     .filter((instr, i) => {return !(i > 0 && instr.startsWith("Start"))})
     .map(nd => {
       return <div className="result-list-item-node">

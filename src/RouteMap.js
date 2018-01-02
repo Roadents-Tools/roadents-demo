@@ -21,7 +21,7 @@ const DEFAULT_ZOOM = 14;
 const DEFAULT_POS = {lat : 41, lng: -74};
 
 const LINE_WEIGHT = 3;
-const DASH_SPACE = 2;
+const DASH_SPACE = 3;
 const DASH_SCALE = 0.25;
 const RADIUS_SCALE = 45;
 
@@ -49,25 +49,30 @@ export default class RouteMap extends Component {
 
   avgLatLng(routes) {
     var tcount = routes
-      .map(rt => rt.route).reduce((x, y) => x.concat(y), [])
-      .length;
+      .map(rt => rt.steps.length)
+      .reduce((a, b) => a + b)
     var sumpos = routes
-      .map(rt => rt.route).reduce((x, y) => x.concat(y), [])
-      .map(nd => nd.pt)
-      .map((item) => item[Object.keys(item)[0]])
-      .filter((item) => item !== undefined)
+      .map(rt => rt.steps)
+      .reduce((x, y) => x.concat(y), [])
+      .map(nd => nd.end_pt)
       .reduce((itm1, itm2) => {return {latitude : itm1.latitude + itm2.latitude, longitude: itm1.longitude + itm2.longitude}}, {latitude: 0, longitude:0});
     return {latitude : sumpos.latitude / tcount, longitude : sumpos.longitude / tcount};
   }
 
   routeToPath(route) {
-    return route.route
-      .map(nd => {return {pt : nd.pt, walk : nd.walkTimeFromPrev > 0}})
+    var stps = route.steps
+      .map(nd => {return {pt : nd.end_pt, walk : nd["step_type"] === "walk"}})
       .map(item => {return {
-        lat : item.pt[Object.keys(item.pt)[0]].latitude,
-        lng : item.pt[Object.keys(item.pt)[0]].longitude,
+        lat : item.pt.latitude,
+        lng : item.pt.longitude,
         walk : item.walk
        }})
+    var start = [{
+      lat : route.start_pt.latitude,
+      lng : route.start_pt.longitude,
+      walk : false
+    }]
+    return start.concat(stps)
   }
 
   buildRoutePolyline(route, selected) {
@@ -115,10 +120,13 @@ export default class RouteMap extends Component {
   }
 
   buildStationCircles(route, selected) {
-    var path = route.route
-      .map(nd => nd.pt)
-      .map(item => item[Object.keys(item)[0]])
+    var pathPts = route.steps
+      .map(nd => nd.end_pt)
       .map(item => {return {lat : item.latitude, lng : item.longitude}});
+      var path = [{
+        lat : route.start_pt.latitude,
+        lng : route.start_pt.longitude
+      }].concat(pathPts)
     /*var startCircle = new google.maps.Circle({
       strokeColor : selected ? START_BORDER_COLOR_SELECTED : START_BORDER_COLOR_NORMAL,
       strokeOpacity: 1,
@@ -129,7 +137,7 @@ export default class RouteMap extends Component {
       zIndex: 20,
       radius: this.getCircleRad(this.map.getZoom())
     });*/
-    var endpt = route.dest.name;
+    var endpt = route.end_pt.name;
     var endMarker = new google.maps.Marker({
       position: path[path.length - 1],
       icon: {
@@ -144,7 +152,6 @@ export default class RouteMap extends Component {
       title : endpt
     });
     endMarker.ttp = "mk";
-    console.log(`End marker at ${JSON.stringify(endMarker.position)}`);
 
     var startMarker = new google.maps.Marker({
       position: path[0],
@@ -158,7 +165,6 @@ export default class RouteMap extends Component {
       }
     });
     startMarker.ttp = "mk";
-    console.log(`Start marker at ${JSON.stringify(startMarker.position)} with ${startMarker.ttp}`);
     /*var destCircle = new google.maps.Circle({
       strokeColor : selected ? DEST_BORDER_COLOR_SELECTED : DEST_BORDER_COLOR_NORMAL,
       strokeOpacity: 1,
@@ -181,7 +187,6 @@ export default class RouteMap extends Component {
         radius: this.getCircleRad(this.map.getZoom())
       }));
     let rval = [startMarker, ...rest, endMarker]
-    console.log(`Returning ${rval.length} circs and marks for route of size ${route.route.length}`);
       //return [startCircle, ...rest, destCircle];
     return rval
   }
@@ -201,12 +206,10 @@ export default class RouteMap extends Component {
   }
 
   recalculateZoom() {
-    console.log(`Map zoom level : ${this.map.getZoom()}`);
     const circlerad = this.getCircleRad(this.map.getZoom());
     const pathweight = this.getWalkingWeight(this.map.getZoom());
     const mkw = 20 * this.getMarkerScale(this.map.getZoom())
     const mkh = 34 * this.getMarkerScale(this.map.getZoom())
-    console.log(`Marker dims: ${mkw} x ${mkh}`);
     this.lines.forEach(l => {
       if(l.walk) {
         l.setOptions({strokeWeight : pathweight})
@@ -225,7 +228,6 @@ export default class RouteMap extends Component {
           if(l.selected) {
             icons[0].icon.strokeColor = PATH_COLOR_TRANSIT_SELECTED;
           }
-          console.log(icons[0].icon.strokeWeight);
           l.setOptions({icons : icons});
       }
     })
@@ -257,7 +259,7 @@ export default class RouteMap extends Component {
     this.lines = [];
     this.circles.forEach(c => c.setMap(null))
 
-    if( !this.props.routes || this.props.routes.length == 0) {
+    if( !this.props.routes || this.props.routes.length === 0) {
       this.map.panTo(DEFAULT_POS);
       this.center = DEFAULT_POS;
       return;
@@ -278,7 +280,6 @@ export default class RouteMap extends Component {
       });
       var circles = this.buildStationCircles(this.props.routes[i], i=== this.props.selected);
       circles.forEach(c => {
-        console.log(`Got circle ${c}.`);
         c.setMap(this.map);
         this.circles.push(c);
       });

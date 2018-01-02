@@ -42,7 +42,7 @@ class App extends Component {
     call(this.buildUrl(e))
       .then(rts => rts.map(rt => {
         var nrt = JSON.parse(JSON.stringify(rt));
-        if(nrt.dest) nrt.dest.name = nrt.dest.name + `(${e.query})`;
+        if(nrt.end_pt) nrt.end_pt.name = nrt.end_pt.name + `(${e.query})`;
         return nrt;
       }))
       .catch((err) => {console.log(err);})
@@ -60,7 +60,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.sortNum);
     return (
       <MuiThemeProvider>
         <div id="App" className="App">

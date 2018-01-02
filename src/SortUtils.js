@@ -21,43 +21,42 @@ function latLngDist(p0, p1) {
 }
 
 export function displacement(rt) {
-  return latLngDist(rt.start, rt.dest);
+  return latLngDist(rt.start_pt, rt.end_pt);
 }
 
 export function distance(rt) {
-  var rval = 0;
-  for(var i = 1; i < rt.route.length; i++) {
-    var pa = rt.route[i].pt[Object.keys(rt.route[i].pt)];
-    var pb = rt.route[i-1].pt[Object.keys(rt.route[i-1].pt)];
-    rval += latLngDist(pa, pb);
-  }
-  return rval;
+  return rt.steps
+  .map((stp) => {return latLngDist(stp.start_pt, stp.end_pt)})
+  .reduce((a, b) => a + b)
 }
 
 export function walkTime(rt) {
-  return rt.route
-      .map(nd => nd.walkTimeFromPrev)
+  return rt.steps
+      .filter((nd) => nd["step_type"] === "walk")
+      .map(nd => nd.total_time)
       .reduce((a, b) => a+b);
 }
 
 export function waitTime(rt) {
-  return rt.route
-      .map(nd => nd.waitTimeFromPrev)
+  return rt.steps
+      .filter(nd => nd["step_type"] === "transit")
+      .map(nd => nd.wait_time)
       .reduce((a, b) => a+b);
 }
 
 export function travelTime(rt) {
-  return rt.route
-      .map(nd => nd.travelTimeFromPrev)
+  return rt.steps
+      .filter(nd => nd["step_type"] === "transit")
+      .map(nd => nd.travel_time)
       .reduce((a, b) => a+b);
 }
 
 export function totalTime(rt) {
-  return walkTime(rt) + waitTime(rt) + travelTime(rt);
+  return rt.total_time;
 }
 
 export function nodeCount(rt) {
-  return rt.route.length;
+  return rt.steps.length;
 }
 
 export function netVelocity(rt) {
@@ -66,18 +65,11 @@ export function netVelocity(rt) {
 
 export function avgVelocity(rt) {
   const totalDist = distance(rt);
-  var rval = 0;
-  for(var i = 1; i < rt.route.length; i++) {
-    var pa = rt.route[i].pt[Object.keys(rt.route[i].pt)];
-    var pb = rt.route[i-1].pt[Object.keys(rt.route[i-1].pt)];
-    var x = latLngDist(pa, pb);
-
-    var dt = rt.route[i].waitTimeFromPrev + rt.route[i].walkTimeFromPrev + rt.route[i].travelTimeFromPrev;
-
-    var unweightedVel = x/dt;
-    var weight = x/totalDist;
-
-    rval += weight * unweightedVel;
-  }
+  var rval = rt.steps.map(nd => {
+    var dx = latLngDist(nd.start_pt, nd.end_pt)
+    var dt = nd.total_time
+    return dx/dt * dx/totalDist
+  })
+  .reduce((a, b) => a + b)
   return rval;
 }

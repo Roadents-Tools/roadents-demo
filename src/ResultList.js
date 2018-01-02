@@ -30,7 +30,7 @@ export default class ResultList extends Component{
     if(die) return;
     this.offset = this.props.sortNum * MAX_LOAD;
     var nload = this.props.routes.slice(this.offset, this.offset + INITIAL_LOAD)
-      .filter((item) => {if(item.dest) return true; else return false;});
+      .filter((item) => {if(item.end_pt) return true; else return false;});
     this.props.onload(nload);
     this.setState({
       loadedRoutes : nload,
@@ -51,7 +51,7 @@ export default class ResultList extends Component{
     var addSize = Math.min(this.state.loadedRoutes.length + ADD_PER_LOAD, MAX_LOAD);
     var raw = this.props.routes.slice(this.offset, this.offset + addSize);
     var nload = raw
-      .filter((item) => {if(item.dest) return true; else return false;});
+      .filter((item) => {if(item.end_pt) return true; else return false;});
     this.props.onload(nload);
     this.setState({
       loadedRoutes : nload
