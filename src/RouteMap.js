@@ -54,22 +54,22 @@ export default class RouteMap extends Component {
     var sumpos = routes
       .map(rt => rt.steps)
       .reduce((x, y) => x.concat(y), [])
-      .map(nd => nd.end_pt)
+      .map(nd => nd.end_point)
       .reduce((itm1, itm2) => {return {latitude : itm1.latitude + itm2.latitude, longitude: itm1.longitude + itm2.longitude}}, {latitude: 0, longitude:0});
     return {latitude : sumpos.latitude / tcount, longitude : sumpos.longitude / tcount};
   }
 
   routeToPath(route) {
     var stps = route.steps
-      .map(nd => {return {pt : nd.end_pt, walk : nd["step_type"] === "walk"}})
+      .map(nd => {return {point : nd.end_point, walk : nd["step_type"] === "walk"}})
       .map(item => {return {
-        lat : item.pt.latitude,
-        lng : item.pt.longitude,
+        lat : item.point.latitude,
+        lng : item.point.longitude,
         walk : item.walk
        }})
     var start = [{
-      lat : route.start_pt.latitude,
-      lng : route.start_pt.longitude,
+      lat : route.start_point.latitude,
+      lng : route.start_point.longitude,
       walk : false
     }]
     return start.concat(stps)
@@ -121,11 +121,11 @@ export default class RouteMap extends Component {
 
   buildStationCircles(route, selected) {
     var pathPts = route.steps
-      .map(nd => nd.end_pt)
+      .map(nd => nd.end_point)
       .map(item => {return {lat : item.latitude, lng : item.longitude}});
       var path = [{
-        lat : route.start_pt.latitude,
-        lng : route.start_pt.longitude
+        lat : route.start_point.latitude,
+        lng : route.start_point.longitude
       }].concat(pathPts)
     /*var startCircle = new google.maps.Circle({
       strokeColor : selected ? START_BORDER_COLOR_SELECTED : START_BORDER_COLOR_NORMAL,
@@ -137,7 +137,7 @@ export default class RouteMap extends Component {
       zIndex: 20,
       radius: this.getCircleRad(this.map.getZoom())
     });*/
-    var endpt = route.end_pt.name;
+    var endpoint = route.end_point.name;
     var endMarker = new google.maps.Marker({
       position: path[path.length - 1],
       icon: {
@@ -149,7 +149,7 @@ export default class RouteMap extends Component {
       },
       map : null,
       scale : this.getMarkerScale(this.map.getZoom()),
-      title : endpt
+      title : endpoint
     });
     endMarker.ttp = "mk";
 
@@ -176,13 +176,13 @@ export default class RouteMap extends Component {
       radius: this.getCircleRad(this.map.getZoom())
     });*/
     var rest = path.slice(1, path.length -1)
-      .map(pt => new google.maps.Circle({
+      .map(point => new google.maps.Circle({
         strokeColor : selected ? STATION_BORDER_COLOR_SELECTED : STATION_BORDER_COLOR_NORMAL,
         strokeOpacity: 1,
         strokeWeight: 2,
         fillColor: '#FFFFFF',
         fillOpacity: 1,
-        center: pt,
+        center: point,
         zIndex: selected ? 2 : 1,
         radius: this.getCircleRad(this.map.getZoom())
       }));

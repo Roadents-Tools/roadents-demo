@@ -26,14 +26,14 @@ export default class ResultListItem extends Component{
 
   getInstruction(node) {
       if(node["step_type"] === "walk") {
-        var endpt = node.end_pt.name;
+        var endpoint = node.end_point.name;
         var mins = Math.round(node.total_time/60);
         var secs = Math.round((node.total_time) % 59);
-        if(mins > 0) return `Walk for ${mins} minutes, ${secs} seconds to ${endpt}`;
-        else return `Walk for ${secs} seconds to ${endpt}`;
+        if(mins > 0) return `Walk for ${mins} minutes, ${secs} seconds to ${endpoint}`;
+        else return `Walk for ${secs} seconds to ${endpoint}`;
       }
       else if(node["step_type"] === "transit"){
-        var endpt = node.end_pt.name;
+        var endpoint = node.end_point.name;
         var waitmins = Math.round(node.wait_time/60);
         var waitsecs = Math.round((node.wait_time) % 59);
         var tmins = Math.round(node.travel_time/60);
@@ -48,9 +48,9 @@ export default class ResultListItem extends Component{
     }
 
   generateHeader(showNodes) {
-    var header = this.props.route.end_pt.name;
-    if(this.props.route.end_pt.address) {
-      header += " - " + this.props.route.end_pt.address;
+    var header = this.props.route.end_point.name;
+    if(this.props.route.end_point.address) {
+      header += " - " + this.props.route.end_point.address;
     }
     if (!showNodes) {
       return <div className="result-list-item-header" onClick={this.toggleNodes}>

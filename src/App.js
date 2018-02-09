@@ -9,7 +9,7 @@ import Sort from './Sort.js';
 import {displacement, nodeCount} from './SortUtils.js';
 import {delay, call} from './PromiseUtils.js';
 
-const BASE_URL = 'http://localhost:4567/demo';
+const BASE_URL = 'http://debstop.dynamic.ucsd.edu:4567/demo';
 class App extends Component {
   static get contextTypes() {
     return {

@@ -21,12 +21,12 @@ function latLngDist(p0, p1) {
 }
 
 export function displacement(rt) {
-  return latLngDist(rt.start_pt, rt.end_pt);
+  return latLngDist(rt.start_point, rt.end_point);
 }
 
 export function distance(rt) {
   return rt.steps
-  .map((stp) => {return latLngDist(stp.start_pt, stp.end_pt)})
+  .map((stp) => {return latLngDist(stp.start_point, stp.end_point)})
   .reduce((a, b) => a + b)
 }
 
@@ -66,7 +66,7 @@ export function netVelocity(rt) {
 export function avgVelocity(rt) {
   const totalDist = distance(rt);
   var rval = rt.steps.map(nd => {
-    var dx = latLngDist(nd.start_pt, nd.end_pt)
+    var dx = latLngDist(nd.start_point, nd.end_point)
     var dt = nd.total_time
     return dx/dt * dx/totalDist
   })
